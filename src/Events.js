@@ -1,6 +1,6 @@
 class Events {
   callbacks = [];
-  newxId = 0;
+  nextId = 0;
 
   //emit event
   emit(eventName, value) {
@@ -13,7 +13,7 @@ class Events {
 
   //subscribe
   on(eventName, caller, callback) {
-    this.nexId += 1;
+    this.nextId += 1;
     this.callbacks.push({
       id: this.nextId,
       eventName,

@@ -5,7 +5,7 @@ import { FrameIndexPattern } from "../../FrameIndexPattern";
 import { GameObject } from "../../GameObject";
 import { isSpaceFree } from "../../helpers/grid";
 import { moveTowards } from "../../helpers/moveTowards";
-import { walls } from "../../levels/level1";
+import { Input } from "../../Input";
 import { resources } from "../../resources";
 import { Sprite } from "../../Sprite";
 import { Vector2 } from "../../Vector2";
@@ -59,16 +59,44 @@ export class Hero extends GameObject {
     this.destinationPosition = this.position.duplicate();
     this.itemPickupTime = 0;
     this.itemPickupShell = null;
+    this.isLocked = false;
 
     events.on("HERO_PICKS_UP_ITEM", this, (data) => {
       this.onPickUpItem(data);
     });
   }
 
+  ready() {
+    events.on("START_TEXT_BOX", this, () => {
+      this.isLocked = true;
+    });
+    events.on("END_TEXT_BOX", this, () => {
+      this.isLocked = false;
+    });
+  }
+
   step(delta, root) {
+    if (this.isLocked) {
+      return;
+    }
+
     if (this.itemPickupTime > 0) {
       this.workOnItemPickup(delta);
       return;
+    }
+
+    /** @type {Input} */
+    const input = root.input;
+    if (input?.getActionJustPressed("Space")) {
+      const objAtPosition = this.parent.children.find((child) => {
+        return child.position.matches(
+          this.position.toNeighbor(this.facingDirection)
+        );
+      });
+
+      if (objAtPosition) {
+        events.emit("HERO_REQUESTS_ACTION", objAtPosition);
+      }
     }
 
     const distance = moveTowards(this, this.destinationPosition, 1);
@@ -132,7 +160,16 @@ export class Hero extends GameObject {
 
     this.facingDirection = input.direction ?? this.facingDirection;
 
-    if (isSpaceFree(walls, nextX, nextY)) {
+    const spaceIsFree = isSpaceFree(root.level?.walls, nextX, nextY);
+    const solidBodyAtSpace = this.parent.children.find((child) => {
+      return (
+        child.isSolid &&
+        child.position.x === nextX &&
+        child.position.y === nextY
+      );
+    });
+
+    if (spaceIsFree && !solidBodyAtSpace) {
       this.destinationPosition.x = nextX;
       this.destinationPosition.y = nextY;
     }
