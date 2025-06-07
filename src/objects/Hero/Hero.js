@@ -1,5 +1,5 @@
 import { Animations } from "../../Animations";
-import { DOWN, LEFT, RIGHT, UP } from "../../consts";
+import { DOWN, GRID_SIZE, LEFT, RIGHT, UP } from "../../consts";
 import { events } from "../../Events";
 import { FrameIndexPattern } from "../../FrameIndexPattern";
 import { GameObject } from "../../GameObject";
@@ -30,7 +30,7 @@ export class Hero extends GameObject {
     const shadow = new Sprite({
       resource: resources.images.shadow,
       frameSize: new Vector2(32, 32),
-      position: new Vector2(-8, -19),
+      position: new Vector2(-6, -20),
     });
     this.addChild(shadow);
 
@@ -40,7 +40,7 @@ export class Hero extends GameObject {
       hFrames: 3,
       vFrames: 8,
       frame: 1,
-      position: new Vector2(-8, -20),
+      position: new Vector2(-6, -20),
       animations: new Animations({
         walkDown: new FrameIndexPattern(WALK_DOWN),
         walkUp: new FrameIndexPattern(WALK_UP),
@@ -139,22 +139,21 @@ export class Hero extends GameObject {
 
     let nextX = this.destinationPosition.x;
     let nextY = this.destinationPosition.y;
-    const gridSize = 16;
 
     if (input.direction === DOWN) {
-      nextY += gridSize;
+      nextY += GRID_SIZE;
       this.body.animations.play("walkDown");
     }
     if (input.direction === UP) {
-      nextY -= gridSize;
+      nextY -= GRID_SIZE;
       this.body.animations.play("walkUp");
     }
     if (input.direction === LEFT) {
-      nextX -= gridSize;
+      nextX -= GRID_SIZE;
       this.body.animations.play("walkLeft");
     }
     if (input.direction === RIGHT) {
-      nextX += gridSize;
+      nextX += GRID_SIZE;
       this.body.animations.play("walkRight");
     }
 

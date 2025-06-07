@@ -1,6 +1,5 @@
 import { GameLoop } from "./src/GameLoop";
-import { CaveLevel1 } from "./src/levels/CaveLevel1";
-import { OutdoorLevel1 } from "./src/levels/OutdoorLevel1";
+import { MainRoomLevel } from "./src/levels/mainRoom";
 
 import { Main } from "./src/objects/Main/Main";
 
@@ -13,8 +12,7 @@ const context = canvas.getContext("2d");
 const mainScene = new Main({
   position: new Vector2(0, 0),
 });
-// mainScene.setLevel(new OutdoorLevel1());
-mainScene.setLevel(new CaveLevel1());
+mainScene.setLevel(new MainRoomLevel());
 
 const update = (delta) => {
   mainScene.stepEntry(delta, mainScene);

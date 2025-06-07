@@ -47,7 +47,7 @@ export class Sprite extends GameObject {
   }
 
   drawImage(context, x, y) {
-    if (!this.resource.isLoaded) {
+    if (!this.resource || !this.resource.isLoaded) {
       return;
     }
 

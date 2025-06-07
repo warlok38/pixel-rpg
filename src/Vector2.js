@@ -1,4 +1,4 @@
-import { DOWN, LEFT, RIGHT, UP } from "./consts";
+import { DOWN, GRID_SIZE, LEFT, RIGHT, UP } from "./consts";
 
 export class Vector2 {
   constructor(x = 0, y = 0) {
@@ -18,16 +18,16 @@ export class Vector2 {
     let x = this.x;
     let y = this.y;
     if (dir === LEFT) {
-      x -= 16;
+      x -= GRID_SIZE;
     }
     if (dir === RIGHT) {
-      x += 16;
+      x += GRID_SIZE;
     }
     if (dir === UP) {
-      y -= 16;
+      y -= GRID_SIZE;
     }
     if (dir === DOWN) {
-      y += 16;
+      y += GRID_SIZE;
     }
     return new Vector2(x, y);
   }

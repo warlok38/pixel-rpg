@@ -1,11 +1,17 @@
+import { TEXT_CONTENT_NONE } from "../../consts";
 import { GameObject } from "../../GameObject";
 import { resources } from "../../resources";
 import { Sprite } from "../../Sprite";
 import { storyFlags } from "../../StoryFlags";
 import { Vector2 } from "../../Vector2";
 
+const defaultTextConfig = {
+  content: TEXT_CONTENT_NONE,
+  portraitFrame: resources.images.portraits[0],
+};
+
 export class Npc extends GameObject {
-  constructor(x, y, textConfig = {}) {
+  constructor(x, y, bodyConfig, shadowConfig, textConfig = defaultTextConfig) {
     super({
       position: new Vector2(x, y),
     });
@@ -15,20 +21,20 @@ export class Npc extends GameObject {
     this.textContent = textConfig.content;
     this.textPortraitFrame = textConfig.portraitFrame;
 
-    const shadow = new Sprite({
-      resource: resources.images.shadow,
-      frameSize: new Vector2(32, 32),
-      position: new Vector2(-8, -19),
-    });
-    this.addChild(shadow);
+    if (shadowConfig) {
+      const shadow = new Sprite(shadowConfig);
+      this.addChild(shadow);
+    }
 
-    const body = new Sprite({
-      resource: resources.images.knight,
-      frameSize: new Vector2(32, 32),
-      hFrames: 2,
-      vFrames: 1,
-      position: new Vector2(-8, -20),
-    });
+    const body = new Sprite(
+      bodyConfig || {
+        resource: resources.images.unknownNPC,
+        frameSize: new Vector2(32, 32),
+        hFrames: 2,
+        vFrames: 1,
+        position: new Vector2(0, 0),
+      }
+    );
     this.addChild(body);
   }
 
