@@ -5,8 +5,10 @@ class Resources {
       shadow: "/sprites/shadow.png",
       rod: "/sprites/rod.png",
       exit: "/sprites/exit.png",
-      doorOpen: "/sprites/door-open.png",
-      doorClosed: "/sprites/door-closed.png",
+      doorOpenLeft: "/sprites/door-open-left.png",
+      doorOpenRight: "/sprites/door-open-right.png",
+      doorClosedLeft: "/sprites/door-closed-left.png",
+      doorClosedRight: "/sprites/door-closed-right.png",
 
       //levels
       sky: "/sprites/sky.png",
@@ -16,6 +18,7 @@ class Resources {
 
       mainRoom: "/sprites/main-room.png",
       mainRoomBackground: "/sprites/main-room-background.png",
+      balconRoom: "/sprites/balcon-room.png",
 
       //npc
       knight: "/sprites/knight-sheet-1.png",

@@ -18,9 +18,9 @@ export class Rod extends GameObject {
   }
 
   ready() {
-    events.on("HERO_POSITION", this, (pos) => {
-      const roundedHeroX = Math.round(pos.x);
-      const roundedHeroY = Math.round(pos.y);
+    events.on("HERO_POSITION", this, ({ position }) => {
+      const roundedHeroX = Math.round(position.x);
+      const roundedHeroY = Math.round(position.y);
 
       if (
         roundedHeroX === this.position.x &&

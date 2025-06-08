@@ -7,9 +7,11 @@ import { resources } from "../resources";
 import { Sprite } from "../Sprite";
 import { Vector2 } from "../Vector2";
 import { Hero } from "./../objects/Hero/Hero";
+import { BalconRoomLevel } from "./BalconRoom";
 import { CaveLevel1 } from "./CaveLevel1";
 
 const DEFAULT_HERO_POSITION = new Vector2(gridCells(12), gridCells(10));
+const DOOR_POSITION_LEFT = "Left";
 
 export class MainRoomLevel extends Level {
   constructor(params = {}) {
@@ -25,11 +27,16 @@ export class MainRoomLevel extends Level {
     });
     this.addChild(groundSprite);
 
-    const door = new Door(gridCells(7), gridCells(11));
+    const door = new Door(gridCells(7), gridCells(11), DOOR_POSITION_LEFT);
     this.addChild(door);
 
     this.heroStartPosition = params.heroPosition ?? DEFAULT_HERO_POSITION;
-    const hero = new Hero(this.heroStartPosition.x, this.heroStartPosition.y);
+    this.heroStartFacingDirection = params.facingDirection;
+    const hero = new Hero(
+      this.heroStartPosition.x,
+      this.heroStartPosition.y,
+      this.heroStartFacingDirection
+    );
     this.addChild(hero);
 
     const whiteCat = new Npc(
@@ -96,7 +103,7 @@ export class MainRoomLevel extends Level {
 
     //vertical walls
     this.renderWalls(48, gridCellsArray(64, 8));
-    this.renderWalls(248, gridCellsArray(64, 8));
+    this.renderWalls(256, gridCellsArray(64, 8));
 
     //horizontal walls
     this.renderWalls(gridCellsArray(48, 26), 56);
@@ -143,8 +150,9 @@ export class MainRoomLevel extends Level {
     events.on("HERO_EXITS", this, () => {
       events.emit(
         "CHANGE_LEVEL",
-        new CaveLevel1({
-          heroPosition: new Vector2(gridCells(3), gridCells(6)),
+        new BalconRoomLevel({
+          heroPosition: new Vector2(gridCells(30), gridCells(11)),
+          facingDirection: DOOR_POSITION_LEFT.toUpperCase(),
         })
       );
     });

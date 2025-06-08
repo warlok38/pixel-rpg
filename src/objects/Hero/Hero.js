@@ -22,7 +22,7 @@ import {
 } from "./heroAnimations";
 
 export class Hero extends GameObject {
-  constructor(x, y) {
+  constructor(x, y, facingDirection) {
     super({
       position: new Vector2(x, y),
     });
@@ -55,7 +55,7 @@ export class Hero extends GameObject {
     });
     this.addChild(this.body);
 
-    this.facingDirection = DOWN;
+    this.facingDirection = facingDirection || DOWN;
     this.destinationPosition = this.position.duplicate();
     this.itemPickupTime = 0;
     this.itemPickupShell = null;
@@ -115,7 +115,10 @@ export class Hero extends GameObject {
     }
     this.lastX = this.position.x;
     this.lastY = this.position.y;
-    events.emit("HERO_POSITION", this.position);
+    events.emit("HERO_POSITION", {
+      position: this.position,
+      facingDirection: this.facingDirection,
+    });
   }
 
   tryMove(root) {
