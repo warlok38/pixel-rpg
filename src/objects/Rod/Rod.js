@@ -1,3 +1,4 @@
+import { HERO_POSITION } from "../../consts";
 import { events } from "../../Events";
 import { GameObject } from "../../GameObject";
 import { resources } from "../../resources";
@@ -18,7 +19,7 @@ export class Rod extends GameObject {
   }
 
   ready() {
-    events.on("HERO_POSITION", this, ({ position }) => {
+    events.on(HERO_POSITION, this, ({ position }) => {
       const roundedHeroX = Math.round(position.x);
       const roundedHeroY = Math.round(position.y);
 

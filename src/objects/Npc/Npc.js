@@ -1,4 +1,4 @@
-import { TEXT_CONTENT_NONE } from "../../consts";
+import { GET_CONTENT_CODES, TEXT_CONTENT_NONE } from "../../consts";
 import { GameObject } from "../../GameObject";
 import { resources } from "../../resources";
 import { Sprite } from "../../Sprite";
@@ -6,7 +6,7 @@ import { storyFlags } from "../../StoryFlags";
 import { Vector2 } from "../../Vector2";
 
 const defaultTextConfig = {
-  content: TEXT_CONTENT_NONE,
+  content: [{ string: TEXT_CONTENT_NONE }],
   portraitFrame: resources.images.portraits[0],
 };
 
@@ -47,6 +47,7 @@ export class Npc extends GameObject {
     }
 
     return {
+      code: GET_CONTENT_CODES.npc,
       portraitFrame: this.textPortraitFrame,
       string: match.string,
       addsFlag: match.addsFlag ?? null,

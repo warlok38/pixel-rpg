@@ -1,3 +1,4 @@
+import { HERO_POSITION } from "../../consts";
 import { events } from "../../Events";
 import { resources } from "../../resources";
 import { Vector2 } from "../../Vector2";
@@ -19,7 +20,7 @@ export class Exit extends GameObject {
   }
 
   ready() {
-    events.on("HERO_POSITION", this, ({ position }) => {
+    events.on(HERO_POSITION, this, ({ position }) => {
       const roundedHeroX = Math.round(position.x);
       const roundedHeroY = Math.round(position.y);
 

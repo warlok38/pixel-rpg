@@ -1,12 +1,13 @@
 import { GameObject } from "./GameObject";
 import { events } from "./Events";
 import { Vector2 } from "./Vector2";
+import { HERO_POSITION } from "./consts";
 
 export class Camera extends GameObject {
   constructor() {
     super({});
 
-    events.on("HERO_POSITION", this, ({ position }) => {
+    events.on(HERO_POSITION, this, ({ position }) => {
       this.centerPositionOnTarget(position);
     });
 

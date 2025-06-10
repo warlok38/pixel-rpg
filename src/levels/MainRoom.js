@@ -1,5 +1,12 @@
+import {
+  END_COLLIDE_WITH_OBJECT,
+  HERO_LOOK_AT_OBJECT,
+  HERO_STOP_LOOK_AT_OBJECT,
+  START_COLLIDE_WITH_OBJECT,
+} from "../consts";
 import { events } from "../Events";
 import { gridCells, gridCellsArray } from "../helpers/grid";
+import { CollideObject } from "../objects/CollideObject/CollideObject";
 import { Door } from "../objects/Door/Door";
 import { Level } from "../objects/Level/Level";
 import { Npc } from "../objects/Npc/Npc";
@@ -8,7 +15,6 @@ import { Sprite } from "../Sprite";
 import { Vector2 } from "../Vector2";
 import { Hero } from "./../objects/Hero/Hero";
 import { BalconRoomLevel } from "./BalconRoom";
-import { CaveLevel1 } from "./CaveLevel1";
 
 const DEFAULT_HERO_POSITION = new Vector2(gridCells(12), gridCells(10));
 const DOOR_POSITION_LEFT = "Left";
@@ -45,8 +51,6 @@ export class MainRoomLevel extends Level {
       {
         resource: resources.images.whiteCat,
         frameSize: new Vector2(21, 12),
-        hFrames: 2,
-        vFrames: 1,
         position: new Vector2(-1, -1),
       },
       undefined,
@@ -67,8 +71,6 @@ export class MainRoomLevel extends Level {
       {
         resource: resources.images.grayCat,
         frameSize: new Vector2(18, 13),
-        hFrames: 2,
-        vFrames: 1,
         position: new Vector2(1, 0),
       },
       undefined,
@@ -88,14 +90,76 @@ export class MainRoomLevel extends Level {
     );
     this.addChild(grayCat);
 
-    const chair = new Npc(gridCells(18), gridCells(9), {
-      resource: resources.images.chair,
-      frameSize: new Vector2(12, 23),
-      hFrames: 2,
-      vFrames: 1,
-      position: new Vector2(1, -8),
+    const chair = new CollideObject({
+      name: "chair",
+      position: { x: gridCells(18), y: gridCells(9) },
+      bodyConfig: {
+        resource: resources.images.chair,
+        frameSize: new Vector2(12, 23),
+        position: new Vector2(1, -8),
+      },
+      hasCollide: true,
     });
     this.addChild(chair);
+
+    const divan = new CollideObject({
+      name: "divan",
+      position: { x: gridCells(7), y: gridCells(13) },
+      bodyConfig: {
+        resource: resources.images.divan,
+        frameSize: new Vector2(70, 28),
+        position: new Vector2(3, -2),
+      },
+    });
+    this.addChild(divan);
+
+    const kombikGreenLight = new CollideObject({
+      name: "kombikGreenLight",
+      position: { x: gridCells(26), y: gridCells(8) },
+      bodyConfig: {
+        resource: resources.images.kombikGreenLight,
+        frameSize: new Vector2(1, 1),
+        position: new Vector2(2, 0),
+      },
+      drawLayer: "TOP",
+    });
+
+    const kombik = new CollideObject({
+      name: "kombik",
+      position: { x: gridCells(25), y: gridCells(8) },
+      bodyConfig: {
+        resource: resources.images.kombikOff,
+        frameSize: new Vector2(14, 14),
+        position: new Vector2(0, -3),
+      },
+    });
+    this.addChild(kombik);
+
+    const guitar = new CollideObject({
+      name: "guitar",
+      position: { x: gridCells(22), y: gridCells(8) },
+      bodyConfig: {
+        resource: resources.images.guitar,
+        frameSize: new Vector2(5, 24),
+        position: new Vector2(6, -11),
+      },
+      hasCollide: true,
+    });
+    this.addChild(guitar);
+
+    events.on(START_COLLIDE_WITH_OBJECT, this, (name) => {
+      if (guitar.name === name) {
+        guitar.sprite.isVisible = false;
+        this.addChild(kombikGreenLight);
+      }
+    });
+
+    events.on(END_COLLIDE_WITH_OBJECT, this, (name) => {
+      if (guitar.name === name) {
+        guitar.sprite.isVisible = true;
+        this.removeChild(kombikGreenLight);
+      }
+    });
 
     this.walls = new Set();
 
@@ -113,14 +177,9 @@ export class MainRoomLevel extends Level {
     this.renderWalls(gridCellsArray(48, 4), 104);
     this.renderWalls(gridCellsArray(48, 9), 112);
     this.renderWalls(gridCellsArray(48, 10), 120);
-    //chair
-    this.renderWalls([136, 144], 72);
+
     //guitars
     this.renderWalls(gridCellsArray(168, 6), 64);
-    //cat gray
-    this.renderWalls([232, 240], 104);
-    //cat white
-    this.renderWalls(gridCellsArray(136, 3), 112);
   }
 
   renderWalls(x, y) {

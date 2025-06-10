@@ -25,8 +25,14 @@ class Resources {
       unknownNPC: "/sprites/unknown-npc.png",
       whiteCat: "/sprites/white-cat.png",
       grayCat: "/sprites/gray-cat.png",
-      //npcObject
+
+      //collideobjects
+      notFoundObject: "/sprites/not-found-object.png",
       chair: "/sprites/chair.png",
+      guitar: "/sprites/guitar.png",
+      kombikOff: "/sprites/kombik-off.png",
+      kombikGreenLight: "/sprites/kombik-green-light.png",
+      divan: "/sprites/divan.png",
 
       //hud
       textBox: "/sprites/text-box.png",

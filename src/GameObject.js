@@ -43,6 +43,9 @@ export class GameObject {
 
   getDrawChildrenOrdered() {
     return [...this.children].sort((a, b) => {
+      if (a.drawLayer === "TOP") {
+        return 1;
+      }
       if (b.drawLayer === "FLOOR") {
         return 1;
       }

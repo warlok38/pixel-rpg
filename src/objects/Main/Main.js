@@ -1,4 +1,9 @@
 import { Camera } from "../../Camera";
+import {
+  END_COLLIDE_WITH_OBJECT,
+  GET_CONTENT_CODES,
+  START_COLLIDE_WITH_OBJECT,
+} from "../../consts";
 import { events } from "../../Events";
 import { GameObject } from "../../GameObject";
 import { Input } from "../../Input";
@@ -23,29 +28,45 @@ export class Main extends GameObject {
     });
 
     events.on("HERO_REQUESTS_ACTION", this, (withObject) => {
-      if (typeof withObject.getContent === "function") {
+      if (
+        withObject.getContent &&
+        typeof withObject.getContent === "function"
+      ) {
         const content = withObject.getContent();
 
         if (!content) {
           return;
         }
 
-        if (content.addsFlag) {
-          storyFlags.add(content.addsFlag);
+        if (content.code === GET_CONTENT_CODES.npc) {
+          if (content.addsFlag) {
+            storyFlags.add(content.addsFlag);
+          }
+
+          const textBox = new SpriteTextString({
+            portraitFrame: content.portraitFrame,
+            string: content.string,
+          });
+
+          this.addChild(textBox);
+          events.emit("START_TEXT_BOX");
+
+          const endingSub = events.on("END_TEXT_BOX", this, () => {
+            textBox.destroy();
+            events.off(endingSub);
+          });
         }
 
-        const textBox = new SpriteTextString({
-          portraitFrame: content.portraitFrame,
-          string: content.string,
-        });
+        if (
+          content.code === GET_CONTENT_CODES.collideObject &&
+          content.hasCollide
+        ) {
+          events.emit(START_COLLIDE_WITH_OBJECT, content.name);
 
-        this.addChild(textBox);
-        events.emit("START_TEXT_BOX");
-
-        const endingSub = events.on("END_TEXT_BOX", this, () => {
-          textBox.destroy();
-          events.off(endingSub);
-        });
+          const endingSub = events.on(END_COLLIDE_WITH_OBJECT, this, () => {
+            events.off(endingSub);
+          });
+        }
       }
     });
   }

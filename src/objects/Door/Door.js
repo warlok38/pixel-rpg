@@ -1,3 +1,4 @@
+import { HERO_POSITION } from "../../consts";
 import { events } from "../../Events";
 import { resources } from "../../resources";
 import { Vector2 } from "../../Vector2";
@@ -26,7 +27,7 @@ export class Door extends GameObject {
   }
 
   ready() {
-    events.on("HERO_POSITION", this, ({ position, facingDirection }) => {
+    events.on(HERO_POSITION, this, ({ position, facingDirection }) => {
       const roundedHeroX = Math.round(position.x);
       const roundedHeroY = Math.round(position.y);
 

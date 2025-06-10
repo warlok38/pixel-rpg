@@ -1,5 +1,14 @@
 import { Animations } from "../../Animations";
-import { DOWN, GRID_SIZE, LEFT, RIGHT, UP } from "../../consts";
+import {
+  DOWN,
+  END_COLLIDE_WITH_OBJECT,
+  GRID_SIZE,
+  HERO_POSITION,
+  LEFT,
+  RIGHT,
+  START_COLLIDE_WITH_OBJECT,
+  UP,
+} from "../../consts";
 import { events } from "../../Events";
 import { FrameIndexPattern } from "../../FrameIndexPattern";
 import { GameObject } from "../../GameObject";
@@ -11,6 +20,7 @@ import { Sprite } from "../../Sprite";
 import { Vector2 } from "../../Vector2";
 import {
   PICK_UP_DOWN,
+  PLAY_GUITAR,
   STAND_DOWN,
   STAND_LEFT,
   STAND_RIGHT,
@@ -51,6 +61,7 @@ export class Hero extends GameObject {
         standLeft: new FrameIndexPattern(STAND_LEFT),
         standRight: new FrameIndexPattern(STAND_RIGHT),
         pickUpDown: new FrameIndexPattern(PICK_UP_DOWN),
+        playGuitar: new FrameIndexPattern(PLAY_GUITAR),
       }),
     });
     this.addChild(this.body);
@@ -60,6 +71,7 @@ export class Hero extends GameObject {
     this.itemPickupTime = 0;
     this.itemPickupShell = null;
     this.isLocked = false;
+    this.playingCollideAnimationName;
 
     events.on("HERO_PICKS_UP_ITEM", this, (data) => {
       this.onPickUpItem(data);
@@ -73,9 +85,29 @@ export class Hero extends GameObject {
     events.on("END_TEXT_BOX", this, () => {
       this.isLocked = false;
     });
+    events.on(START_COLLIDE_WITH_OBJECT, this, (name) => {
+      this.playingCollideAnimationName = name;
+    });
+    events.on(END_COLLIDE_WITH_OBJECT, this, () => {
+      this.playingCollideAnimationName = undefined;
+    });
   }
 
   step(delta, root) {
+    /** @type {Input} */
+    const input = root.input;
+
+    if (this.playingCollideAnimationName) {
+      if (input?.getActionJustPressed("Space")) {
+        events.emit(END_COLLIDE_WITH_OBJECT, this.playingCollideAnimationName);
+      }
+
+      if (this.playingCollideAnimationName === "guitar") {
+        this.playCollideAnimation("playGuitar");
+      }
+      return;
+    }
+
     if (this.isLocked) {
       return;
     }
@@ -85,8 +117,6 @@ export class Hero extends GameObject {
       return;
     }
 
-    /** @type {Input} */
-    const input = root.input;
     if (input?.getActionJustPressed("Space")) {
       const objAtPosition = this.parent.children.find((child) => {
         return child.position.matches(
@@ -110,12 +140,19 @@ export class Hero extends GameObject {
   }
 
   tryEmitPosition() {
-    if (this.lastX === this.position.x && this.lastY === this.position.y) {
+    if (
+      this.lastX === this.position.x &&
+      this.lastY === this.position.y &&
+      this.lastFacingDirection === this.facingDirection
+    ) {
       return;
     }
+
     this.lastX = this.position.x;
     this.lastY = this.position.y;
-    events.emit("HERO_POSITION", {
+    this.lastFacingDirection = this.facingDirection;
+
+    events.emit(HERO_POSITION, {
       position: this.position,
       facingDirection: this.facingDirection,
     });
@@ -199,5 +236,9 @@ export class Hero extends GameObject {
     if (this.itemPickupTime <= 0) {
       this.itemPickupShell.destroy();
     }
+  }
+
+  playCollideAnimation(name) {
+    this.body.animations.play(name);
   }
 }

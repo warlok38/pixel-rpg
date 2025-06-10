@@ -1,3 +1,5 @@
+import { HERO_LOOK_AT_OBJECT, HERO_STOP_LOOK_AT_OBJECT } from "./consts";
+import { events } from "./Events";
 import { GameObject } from "./GameObject";
 import { Vector2 } from "./Vector2";
 
@@ -11,6 +13,9 @@ export class Sprite extends GameObject {
     scale,
     position,
     animations,
+    showHitbox,
+    hasCollide,
+    isVisible = true,
   }) {
     super({});
     this.resource = resource;
@@ -22,7 +27,24 @@ export class Sprite extends GameObject {
     this.scale = scale ?? 1;
     this.position = position ?? new Vector2(0, 0);
     this.animations = animations ?? null;
+    this.showHitbox = showHitbox ?? false;
+    this.hasCollide = hasCollide ?? false;
+    this.isVisible = isVisible;
     this.buildFrameMap();
+
+    if (hasCollide) {
+      events.on(HERO_LOOK_AT_OBJECT, this, (name) => {
+        if (this.resource.image.src.includes(name)) {
+          this.showHitbox = true;
+        }
+      });
+
+      events.on(HERO_STOP_LOOK_AT_OBJECT, this, (name) => {
+        if (this.resource.image.src.includes(name)) {
+          this.showHitbox = false;
+        }
+      });
+    }
   }
 
   buildFrameMap() {
@@ -47,7 +69,7 @@ export class Sprite extends GameObject {
   }
 
   drawImage(context, x, y) {
-    if (!this.resource || !this.resource.isLoaded) {
+    if (!this.resource || !this.resource.isLoaded || !this.isVisible) {
       return;
     }
 
@@ -62,6 +84,9 @@ export class Sprite extends GameObject {
     const frameSizeX = this.frameSize.x;
     const frameSizeY = this.frameSize.y;
 
+    const drawWidth = frameSizeX * this.scale;
+    const drawHeight = frameSizeY * this.scale;
+
     context.drawImage(
       this.resource.image,
       frameCoordX,
@@ -70,8 +95,23 @@ export class Sprite extends GameObject {
       frameSizeY,
       x,
       y,
-      frameSizeX * this.scale,
-      frameSizeY * this.scale
+      drawWidth,
+      drawHeight
     );
+
+    if (this.showHitbox) {
+      this.drawHitbox(context, x, y, drawWidth, drawHeight);
+    }
+  }
+
+  drawHitbox(context, x, y, width, height) {
+    context.save();
+    context.shadowColor = "#fff";
+    context.shadowBlur = 1;
+    context.lineJoin = "round";
+    context.lineWidth = 0.5;
+    context.strokeStyle = "#B3FB9F";
+    context.strokeRect(x - 0.5, y - 0.5, width + 1, height + 1);
+    context.restore();
   }
 }
