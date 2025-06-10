@@ -98,7 +98,6 @@ export class MainRoomLevel extends Level {
         frameSize: new Vector2(12, 23),
         position: new Vector2(1, -8),
       },
-      hasCollide: true,
     });
     this.addChild(chair);
 

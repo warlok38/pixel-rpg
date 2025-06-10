@@ -33,6 +33,7 @@ class Resources {
       kombikOff: "/sprites/kombik-off.png",
       kombikGreenLight: "/sprites/kombik-green-light.png",
       divan: "/sprites/divan.png",
+      perila: "/sprites/perila.png",
 
       //hud
       textBox: "/sprites/text-box.png",

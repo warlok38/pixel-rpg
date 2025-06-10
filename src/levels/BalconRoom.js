@@ -1,13 +1,12 @@
 import { events } from "../Events";
 import { gridCells, gridCellsArray } from "../helpers/grid";
+import { CollideObject } from "../objects/CollideObject/CollideObject";
 import { Door } from "../objects/Door/Door";
 import { Level } from "../objects/Level/Level";
-import { Npc } from "../objects/Npc/Npc";
 import { resources } from "../resources";
 import { Sprite } from "../Sprite";
 import { Vector2 } from "../Vector2";
 import { Hero } from "./../objects/Hero/Hero";
-import { CaveLevel1 } from "./CaveLevel1";
 import { MainRoomLevel } from "./mainRoom";
 
 const DEFAULT_HERO_POSITION = new Vector2(gridCells(30), gridCells(11));
@@ -38,6 +37,17 @@ export class BalconRoomLevel extends Level {
       this.heroStartFacingDirection
     );
     this.addChild(hero);
+
+    const perila = new CollideObject({
+      name: "perila",
+      position: { x: gridCells(27), y: gridCells(16) },
+      bodyConfig: {
+        resource: resources.images.perila,
+        frameSize: new Vector2(40, 9),
+        position: new Vector2(10, -7),
+      },
+    });
+    this.addChild(perila);
 
     this.walls = new Set();
 
